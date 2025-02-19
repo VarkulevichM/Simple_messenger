@@ -4,6 +4,7 @@ from app.api.v1.endpoints.messages import router
 from app.core.log_file import log_request
 from app.core.metrics import metrics_app
 from app.db.session import init_db
+from app.db.session import create_database
 
 app = FastAPI(title="Simple messenger")
 
@@ -16,6 +17,6 @@ app.mount("/metrics", metrics_app)
 
 @app.on_event("startup")
 async def startup():
-    from db.session import create_database, init_db  # Импортируем новый код
+      # Импортируем новый код
     await create_database()
     await init_db()
