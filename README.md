@@ -106,4 +106,9 @@ GET /api/v1/messages?chat_id=1&limit=10&offset=0
 
 ```pass: ``` admin
 
-Файл для импорта в директории в dashboard `rps fast api-1739960970971.json`
+Создаем новый data source используем ```prometheus ``` 
+
+в качестве `Prometheus server URL` используем http://prometheus:9090
+
+
+Файл для импорта в dashboard в директории проекта`rps fast api-1739960970971.json`
