@@ -25,21 +25,21 @@ async def create_database(settings=None):
     """Создаёт базу данных, если она не существует."""
     try:
         conn = await asyncpg.connect(
-            user=settings.POSTGRES_USER,
-            password=settings.POSTGRES_PASSWORD,
-            host=settings.POSTGRES_HOST,
-            port=settings.POSTGRES_PORT,
+            user=setting.POSTGRES_USER,
+            password=setting.POSTGRES_PASSWORD,
+            host=setting.POSTGRES_HOST,
+            port=setting.POSTGRES_PORT,
             database="postgres"  # Подключаемся к системной БД
         )
         db_exists = await conn.fetchval(
-            "SELECT 1 FROM pg_database WHERE datname = $1", settings.POSTGRES_DB
+            "SELECT 1 FROM pg_database WHERE datname = $1", setting.POSTGRES_DB
         )
 
         if not db_exists:
-            await conn.execute(f'CREATE DATABASE "{settings.POSTGRES_DB}" OWNER "{settings.POSTGRES_USER}"')
-            logger.info(f"База данных {settings.POSTGRES_DB} успешно создана.")
+            await conn.execute(f'CREATE DATABASE "{setting.POSTGRES_DB}" OWNER "{setting.POSTGRES_USER}"')
+            logger.info(f"База данных {setting.POSTGRES_DB} успешно создана.")
         else:
-            logger.info(f"База данных {settings.POSTGRES_DB} уже существует.")
+            logger.info(f"База данных {setting.POSTGRES_DB} уже существует.")
         await conn.close()
     except Exception as e:
         logger.error(f"Ошибка при создании базы данных: {e}")
