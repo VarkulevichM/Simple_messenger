@@ -1,11 +1,13 @@
+from app.db.session import engine  # импортируйте ваш async engine
 from app.db.models.message import Base
-from app.db.session import engine
+import asyncio
+from sqlalchemy.ext.asyncio import create_async_engine
 
-
-def init_db():
-    """Создание всех таблиц в базе данных, если они не существуют."""
-    Base.metadata.create_all(bind=engine)
-
+async def init_db():
+    # Создание всех таблиц асинхронным способом
+    async with engine.begin() as conn:
+        # Создание всех таблиц, если их нет
+        await conn.run_sync(Base.metadata.create_all)
 
 if __name__ == "__main__":
-    init_db()
+    asyncio.run(init_db())
