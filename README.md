@@ -97,3 +97,12 @@ GET /api/v1/messages?chat_id=1&limit=10&offset=0
     ]
 }
 ```
+
+# Для Grfana
+```адрес``` http://localhost:3000/login
+
+```login:``` admin 
+
+```pass: ``` admin
+
+Файл для импорта в директории в dashboard `rps fast api-1739960970971.json`
