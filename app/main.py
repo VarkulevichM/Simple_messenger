@@ -3,8 +3,8 @@ from fastapi import FastAPI
 from app.api.v1.endpoints.messages import router
 from app.core.log_file import log_request
 from app.core.metrics import metrics_app
-from app.db.session import init_db
 from app.db.session import create_database
+from app.db.session import init_db
 
 app = FastAPI(title="Simple messenger")
 

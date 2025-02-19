@@ -1,5 +1,6 @@
 from sqlalchemy import select
 from sqlalchemy.exc import SQLAlchemyError
+
 from app.db.models.message import Message
 from app.db.session import async_session
 

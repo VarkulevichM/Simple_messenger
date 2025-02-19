@@ -1,4 +1,5 @@
-from sqlalchemy import text
+import asyncpg
+from sqlalchemy.exc import OperationalError
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.ext.asyncio import create_async_engine
@@ -7,8 +8,6 @@ from sqlalchemy.orm import sessionmaker
 from app.core.config import setting
 from app.core.log_file import logger
 from app.db.models.message import Base
-from sqlalchemy.exc import OperationalError
-import asyncpg
 
 DATABASE_URL = f"postgresql+asyncpg://{setting.POSTGRES_USER}:{setting.POSTGRES_PASSWORD}@{setting.POSTGRES_HOST}:{setting.POSTGRES_PORT}/{setting.POSTGRES_DB}"
 
@@ -29,7 +28,7 @@ async def create_database(settings=None):
             password=setting.POSTGRES_PASSWORD,
             host=setting.POSTGRES_HOST,
             port=setting.POSTGRES_PORT,
-            database="postgres"  # Подключаемся к системной БД
+            database="postgres"  
         )
         db_exists = await conn.fetchval(
             "SELECT 1 FROM pg_database WHERE datname = $1", setting.POSTGRES_DB
