@@ -16,5 +16,6 @@ app.mount("/metrics", metrics_app)
 
 @app.on_event("startup")
 async def startup():
-    """Инициализация базы данных при старте приложения"""
+    from db.session import create_database, init_db  # Импортируем новый код
+    await create_database()
     await init_db()

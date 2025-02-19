@@ -8,6 +8,7 @@ from app.core.config import setting
 from app.core.log_file import logger
 from app.db.models.message import Base
 from sqlalchemy.exc import OperationalError
+import asyncpg
 
 DATABASE_URL = f"postgresql+asyncpg://{setting.POSTGRES_USER}:{setting.POSTGRES_PASSWORD}@{setting.POSTGRES_HOST}:{setting.POSTGRES_PORT}/{setting.POSTGRES_DB}"
 
@@ -20,26 +21,40 @@ async_session = sessionmaker(
 )
 
 
-async def init_db():
-    """Создание всех таблиц в базе данных и базы данных, если она не существует."""
+async def create_database(settings=None):
+    """Создаёт базу данных, если она не существует."""
     try:
-        # Попытка подключения и создания базы данных
-        async with engine.connect() as conn:
-            await conn.run_sync(Base.metadata.create_all)
-            logger.info("База данных и таблицы успешно созданы.")
-    except OperationalError as e:
-        if 'database "messenger" does not exist' in str(e):
-            # Создаем базу данных, если она не существует
-            logger.info(f"База данных {setting.POSTGRES_DB} не существует. Создаем её.")
-            create_db_url = f"postgresql+asyncpg://{setting.POSTGRES_USER}:{setting.POSTGRES_PASSWORD}@{setting.POSTGRES_HOST}:{setting.POSTGRES_PORT}/postgres"
-            create_engine = create_async_engine(create_db_url, echo=True)
-            async with create_engine.connect() as conn:
-                await conn.execute(f"CREATE DATABASE {setting.POSTGRES_DB}")
-            logger.info(f"База данных {setting.POSTGRES_DB} успешно создана.")
-            await init_db()  # Попытаться снова создать таблицы в новой базе данных
+        conn = await asyncpg.connect(
+            user=settings.POSTGRES_USER,
+            password=settings.POSTGRES_PASSWORD,
+            host=settings.POSTGRES_HOST,
+            port=settings.POSTGRES_PORT,
+            database="postgres"  # Подключаемся к системной БД
+        )
+        db_exists = await conn.fetchval(
+            "SELECT 1 FROM pg_database WHERE datname = $1", settings.POSTGRES_DB
+        )
+
+        if not db_exists:
+            await conn.execute(f'CREATE DATABASE "{settings.POSTGRES_DB}" OWNER "{settings.POSTGRES_USER}"')
+            logger.info(f"База данных {settings.POSTGRES_DB} успешно создана.")
         else:
-            logger.error(f"Ошибка при подключении или создании базы данных: {str(e)}")
-            raise Exception("Ошибка при создании базы данных или таблиц") from e
+            logger.info(f"База данных {settings.POSTGRES_DB} уже существует.")
+        await conn.close()
+    except Exception as e:
+        logger.error(f"Ошибка при создании базы данных: {e}")
+        raise
+
+
+async def init_db():
+    """Создаёт все таблицы в базе данных."""
+    try:
+        async with engine.begin() as conn:
+            await conn.run_sync(Base.metadata.create_all)
+        logger.info("Все таблицы успешно созданы.")
+    except OperationalError as e:
+        logger.error(f"Ошибка при создании таблиц: {e}")
+        raise
 
 
 async def get_db():
