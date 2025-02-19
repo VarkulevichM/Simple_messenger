@@ -112,3 +112,5 @@ GET /api/v1/messages?chat_id=1&limit=10&offset=0
 
 
 Файл для импорта в dashboard в директории проекта`rps fast api-1739960970971.json`
+
+Если графики не отображаются зайти в ``edit`` нажать ``refresh``
