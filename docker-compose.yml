@@ -27,6 +27,8 @@ services:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    command: >
+      bash -c "psql -U ${POSTGRES_USER} -c 'CREATE DATABASE IF NOT EXISTS ${POSTGRES_DB};' && docker-entrypoint.sh postgres"
 
 
   prometheus:
