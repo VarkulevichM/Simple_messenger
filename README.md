@@ -29,8 +29,7 @@
 
 ### Шаг 1: Клонируйте репозиторий
 ```bash
-git clone https://github.com/yourusername/simple-messenger.git
-cd simple-messenger
+git clone git@github.com:VarkulevichM/Simple_messenger.git
 ```
 ### Шаг 2: Настройка переменных окружения
 ```
